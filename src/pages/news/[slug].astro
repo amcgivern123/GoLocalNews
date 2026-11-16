@@ -1,0 +1,145 @@
+---
+import { render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ArticleCard from '../../components/ArticleCard.astro';
+import PromoteBand from '../../components/PromoteBand.astro';
+import { getArticles, articleUrl, authorInfo, localIntro, type Article } from '../../lib/content';
+import { canonicalFor } from '../../lib/network.mjs';
+import { SITE, CATEGORIES, formatDate } from '../../lib/site';
+
+export async function getStaticPaths() {
+  const articles = await getArticles();
+  return articles.map((article) => ({
+    params: { slug: article.id },
+    props: { article, all: articles },
+  }));
+}
+
+interface Props { article: Article; all: Article[] }
+const { article, all } = Astro.props;
+const d = article.data;
+const { title, description, date, category, area, image, imageAlt, imageCaption, image2, image2Alt, image2Caption, pressRelease } = d;
+const { Content } = await render(article);
+
+const url = new URL(articleUrl(article), SITE.url).href;   // this site's copy
+const canonical = canonicalFor(article);                     // hub, or this site
+const author = await authorInfo(article);
+const intro = await localIntro(article);
+const related = all.filter((a) => a.data.category === category && a.id !== article.id).slice(0, 3);
+const enc = encodeURIComponent;
+
+// Business box. The map accepts either the embed link or the whole <iframe> code from Google Maps.
+const b = d.business;
+const mapSrc = b?.map ? (b.map.match(/src="([^"]+)"/)?.[1] ?? b.map).trim() : undefined;
+const mapOk = mapSrc && /^https:\/\/(www\.)?google\.[a-z.]+\/maps\/embed/.test(mapSrc);
+const linkRel = pressRelease ? 'sponsored noopener' : 'noopener';
+const tel = (p: string) => `tel:${p.replace(/[^\d+]/g, '')}`;
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'NewsArticle',
+    headline: title,
+    description,
+    datePublished: date.toISOString(),
+    dateModified: date.toISOString(),
+    image: [new URL(image ?? SITE.defaultImage, SITE.url).href],
+    author: [author.url
+      ? { '@type': 'Person', name: author.name, url: new URL(author.url, SITE.url).href }
+      : { '@type': 'Organization', name: author.name }],
+    publisher: { '@type': 'NewsMediaOrganization', name: SITE.name, url: SITE.url, logo: { '@type': 'ImageObject', url: new URL(SITE.brand.logoPng, SITE.url).href } },
+    mainEntityOfPage: canonical,
+    articleSection: CATEGORIES[category],
+    ...(area ? { contentLocation: { '@type': 'Place', name: area } } : {}),
+    ...(b?.name ? {
+      about: {
+        '@type': 'LocalBusiness',
+        name: b.name,
+        ...(b.address && { address: b.address }),
+        ...(b.phone && { telephone: b.phone }),
+        ...(b.website && { url: b.website }),
+      },
+    } : {}),
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: SITE.url + '/' },
+      { '@type': 'ListItem', position: 2, name: CATEGORIES[category], item: `${SITE.url}/category/${category}/` },
+      { '@type': 'ListItem', position: 3, name: title, item: url },
+    ],
+  },
+];
+---
+<BaseLayout title={title} description={description} image={image} type="article" publishedTime={date} jsonLd={jsonLd} canonical={canonical}>
+  <article class="article">
+    <div class="tags">
+      {pressRelease && <span class="label-pr">Press release</span>}
+      <a class="kicker" href={`/category/${category}/`}>{CATEGORIES[category]}</a>
+      {area && <span class="meta">· {area}</span>}
+    </div>
+    <h1>{title}</h1>
+    <p class="standfirst">{description}</p>
+    <p class="byline">
+      By {author.url ? <a href={author.url}>{author.name}</a> : author.name} · <time datetime={date.toISOString()}>{formatDate(date)}</time>
+    </p>
+    {image && (
+      <figure>
+        <img class="media-wide" src={image} alt={imageAlt ?? ''} fetchpriority="high" />
+        {imageCaption && <figcaption>{imageCaption}</figcaption>}
+      </figure>
+    )}
+    {intro && <p class="local-intro">{intro}</p>}
+    <div class="prose"><Content /></div>
+    {image2 && (
+      <figure>
+        <img class="media-wide" src={image2} alt={image2Alt ?? ''} loading="lazy" decoding="async" />
+        {image2Caption && <figcaption>{image2Caption}</figcaption>}
+      </figure>
+    )}
+
+    {b?.name && (
+      <section class="business" aria-label="Business details">
+        <h2>{b.name}</h2>
+        {b.address && <p>{b.address}</p>}
+        {b.phone && <p><a href={tel(b.phone)}>{b.phone}</a></p>}
+        {b.email && <p><a href={`mailto:${b.email}`}>{b.email}</a></p>}
+        {b.website && <p><a href={b.website} rel={linkRel} target="_blank">Visit {b.name}</a></p>}
+        {mapOk && (
+          <iframe src={mapSrc} loading="lazy" title={`Map showing ${b.name}`}
+            referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
+        )}
+      </section>
+    )}
+
+    <div class="share" aria-label="Share this story">
+      <strong>Share:</strong>
+      <a href={`https://wa.me/?text=${enc(title + ' ' + url)}`} rel="noopener" target="_blank">WhatsApp</a>
+      <a href={`https://www.facebook.com/sharer/sharer.php?u=${enc(url)}`} rel="noopener" target="_blank">Facebook</a>
+      <a href={`https://twitter.com/intent/tweet?url=${enc(url)}&text=${enc(title)}`} rel="noopener" target="_blank">X</a>
+      <a href={`mailto:?subject=${enc(title)}&body=${enc(url)}`}>Email</a>
+    </div>
+  </article>
+
+  {related.length > 0 && (
+    <section aria-labelledby="related-h" style="margin-top:48px">
+      <div class="section-head"><h2 id="related-h">More {CATEGORIES[category]}</h2></div>
+      <div class="grid">{related.map((a) => <ArticleCard article={a} />)}</div>
+    </section>
+  )}
+  <div style="margin-top:48px"><PromoteBand /></div>
+
+  <script>
+    document.querySelectorAll<HTMLButtonElement>('.yt').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const f = document.createElement('iframe');
+        f.src = `https://www.youtube-nocookie.com/embed/${btn.dataset.id}?autoplay=1`;
+        f.allow = 'autoplay; encrypted-media; picture-in-picture';
+        f.allowFullscreen = true;
+        f.title = 'Video';
+        btn.replaceWith(f);
+      });
+    });
+  </script>
+</BaseLayout>

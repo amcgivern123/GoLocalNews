@@ -1,0 +1,15 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { SITE } from '../lib/site';
+// One contact address for the whole network. Set it in sites.json ("contactEmail").
+import config from '../../sites.json';
+const email = (config as { contactEmail?: string }).contactEmail ?? '';
+---
+<BaseLayout title="Contact us" description={`Contact ${SITE.name} with a story, press release or correction.`}>
+  <div class="page">
+    <h1>Contact us</h1>
+    <p>Got a story, a press release or a correction? The quickest way to reach us is the <a class="more" href="/submit/">submit your news</a> form.</p>
+    {email && <p>Or email <a class="more" href={`mailto:${email}`}>{email}</a>.</p>}
+    <p>For advertising, see <a class="more" href="/advertise/">advertise with us</a>.</p>
+  </div>
+</BaseLayout>

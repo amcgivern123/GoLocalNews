@@ -1,0 +1,16 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import OfferCard from '../components/OfferCard.astro';
+import PromoteBand from '../components/PromoteBand.astro';
+import { getLiveOffers } from '../lib/content';
+import { SITE } from '../lib/site';
+
+const offers = await getLiveOffers();
+---
+<BaseLayout title="Local offers" description={`Current deals and special offers from independent businesses across ${SITE.town}.`}>
+  <div class="section-head"><h1>Local offers</h1></div>
+  {offers.length === 0
+    ? <p>No offers running right now. Check back soon.</p>
+    : <div class="grid">{offers.map((o) => <OfferCard offer={o} />)}</div>}
+  <div style="margin-top:48px"><PromoteBand /></div>
+</BaseLayout>

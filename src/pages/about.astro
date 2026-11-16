@@ -1,0 +1,15 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { SITE, hub, isHub } from '../lib/site';
+---
+<BaseLayout title="About us" description={`${SITE.name} shares news, openings and offers from independent businesses across ${SITE.town}.`}>
+  <div class="page">
+    <h1>About us</h1>
+    <p>{SITE.name} shares news, new openings and special offers from the independent businesses that make {SITE.town} tick.</p>
+    {isHub
+      ? <p>{SITE.name} is the home of a network of local business news sites across Northern Ireland. Stories published here are shared with our local titles.</p>
+      : <p>We are part of the <a class="more" href={hub.domain}>{hub.name}</a> network of local business news sites across Northern Ireland.</p>}
+    <p>[A FEW LINES ABOUT WHO RUNS THE SITE AND WHY]</p>
+    <p>Got a story? <a class="more" href="/submit/">Send it in</a>.</p>
+  </div>
+</BaseLayout>

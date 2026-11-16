@@ -1,0 +1,6 @@
+---
+// The site's name with one word in the accent colour, e.g. Belfast <Local> Business.
+import { SITE } from '../lib/site';
+const { words, highlight } = SITE.logo;
+---
+{words.map((w, i) => <>{i > 0 && ' '}{i === highlight ? <span>{w}</span> : w}</>)}

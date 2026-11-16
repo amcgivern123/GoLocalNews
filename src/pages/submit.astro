@@ -1,0 +1,38 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { SITE } from '../lib/site';
+---
+<BaseLayout title="Submit your news" description={`Tell ${SITE.name} about your opening, offer, event or business news.`}>
+  <div class="page">
+    <h1>Submit your news</h1>
+    <p>Opening a new shop, celebrating an anniversary, hiring, or running a special offer? Tell us about it. We'll be in touch if we need anything else.</p>
+
+    <form class="form" name="submit-news" method="POST" action="/form.php">
+      <input type="hidden" name="form-name" value="submit-news" />
+      <p class="hidden"><label>Leave this empty <input name="company-website" /></label></p>
+
+      <div class="field">
+        <label for="type">What are you sending?</label>
+        <select id="type" name="type">
+          <option>Business news</option>
+          <option>Special offer</option>
+          <option>New opening</option>
+          <option>Event</option>
+        </select>
+      </div>
+      <div class="field"><label for="business">Business name</label><input id="business" name="business" required /></div>
+      <div class="field"><label for="area">Area (e.g. Lisburn Road)</label><input id="area" name="area" /></div>
+      <div class="field"><label for="name">Your name</label><input id="name" name="name" autocomplete="name" required /></div>
+      <div class="field"><label for="email">Email</label><input id="email" name="email" type="email" autocomplete="email" required /></div>
+      <div class="field"><label for="phone">Phone (optional)</label><input id="phone" name="phone" type="tel" autocomplete="tel" /></div>
+      <div class="field"><label for="story">Your story or offer</label><textarea id="story" name="story" required></textarea></div>
+      <div class="field"><label for="website">Website or social link (optional)</label><input id="website" name="website" type="url" /></div>
+      <div><button class="btn btn-accent" type="submit">Send it in</button></div>
+    </form>
+  </div>
+</BaseLayout>
+<script>
+  // Pre-select "Special offer" when arriving from an "List an offer" button
+  const t = new URLSearchParams(location.search).get('type');
+  if (t === 'offer') (document.getElementById('type') as HTMLSelectElement).value = 'Special offer';
+</script>

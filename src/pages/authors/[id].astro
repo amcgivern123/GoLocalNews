@@ -1,0 +1,31 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ArticleCard from '../../components/ArticleCard.astro';
+import { getArticles } from '../../lib/content';
+
+export async function getStaticPaths() {
+  const authors = await getCollection('authors');
+  const articles = await getArticles();
+  return authors.map((au) => ({
+    params: { id: au.id },
+    props: { au, list: articles.filter((a) => (a.data.author ?? '').toLowerCase() === au.data.name.toLowerCase()) },
+  }));
+}
+const { au, list } = Astro.props;
+const { name, role, bio, url } = au.data;
+const jsonLd = { '@context': 'https://schema.org', '@type': 'Person', name, jobTitle: role, description: bio, ...(url && { sameAs: [url] }) };
+---
+<BaseLayout title={name} description={`${name}, ${role}. ${bio}`} jsonLd={jsonLd}>
+  <div class="page">
+    <h1>{name}</h1>
+    <p class="kicker">{role}</p>
+    <p>{bio}</p>
+  </div>
+  {list.length > 0 && (
+    <section style="margin-top:40px">
+      <div class="section-head"><h2>Stories by {name}</h2></div>
+      <div class="grid">{list.map((a) => <ArticleCard article={a} showCategory />)}</div>
+    </section>
+  )}
+</BaseLayout>

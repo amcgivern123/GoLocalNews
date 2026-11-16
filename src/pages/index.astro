@@ -1,0 +1,91 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ArticleCard from '../components/ArticleCard.astro';
+import OfferCard from '../components/OfferCard.astro';
+import NewsletterBand from '../components/NewsletterBand.astro';
+import PromoteBand from '../components/PromoteBand.astro';
+import { getArticles, getLiveOffers, pickLead, isPinnedNow, articleUrl } from '../lib/content';
+import { SITE, CATEGORIES, formatDate, type CategorySlug } from '../lib/site';
+
+const articles = await getArticles();
+const lead = pickLead(articles);
+const rest = articles.filter((a) => a !== lead);
+const latest = rest.slice(0, 4);
+const offers = (await getLiveOffers()).slice(0, 4);
+
+// A section for every category that has stories (newest 4 each)
+const sections = (Object.keys(CATEGORIES) as CategorySlug[])
+  .map((slug) => ({ slug, label: CATEGORIES[slug], items: rest.filter((a) => a.data.category === slug).slice(0, 4) }))
+  .filter((s) => s.items.length > 0);
+
+const jsonLd = [
+  { '@context': 'https://schema.org', '@type': 'WebSite', name: SITE.name, url: SITE.url },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'NewsMediaOrganization',
+    name: SITE.name,
+    url: SITE.url,
+    logo: new URL(SITE.brand.logoPng, SITE.url).href,
+    areaServed: SITE.town,
+  },
+];
+---
+<BaseLayout jsonLd={jsonLd}>
+  <div class="stack-xl">
+    {lead && (
+      <section class="lead-row" aria-label="Top stories">
+        <article class="lead">
+          <a href={articleUrl(lead)} tabindex="-1" aria-hidden="true">
+            {lead.data.image
+              ? <img class="media-wide" src={lead.data.image} alt={lead.data.imageAlt ?? ''} fetchpriority="high" />
+              : <div class="media-wide ph">{SITE.name}</div>}
+          </a>
+          <div class="tags">
+            {isPinnedNow(lead) && <span class="pin">Pinned</span>}
+            {lead.data.pressRelease && <span class="label-pr">Press release</span>}
+            <a class="kicker" href={`/category/${lead.data.category}/`}>{CATEGORIES[lead.data.category]}</a>
+          </div>
+          <h1><a href={articleUrl(lead)}>{lead.data.title}</a></h1>
+          <p class="standfirst">{lead.data.description}</p>
+          <p class="meta">By {lead.data.author ?? SITE.name} · <time datetime={lead.data.date.toISOString()}>{formatDate(lead.data.date)}</time></p>
+        </article>
+
+        <aside class="latest" aria-labelledby="latest-h">
+          <h2 id="latest-h">Latest</h2>
+          {latest.map((a) => (
+            <article class="latest-item">
+              <span class="kicker">{CATEGORIES[a.data.category]}</span>
+              <h3><a href={articleUrl(a)}>{a.data.title}</a></h3>
+              <time class="meta" datetime={a.data.date.toISOString()}>{formatDate(a.data.date)}</time>
+            </article>
+          ))}
+          <a class="more" href="/latest/">More latest news →</a>
+        </aside>
+      </section>
+    )}
+
+    {offers.length > 0 && (
+      <section aria-labelledby="offers-h">
+        <div class="section-head">
+          <h2 id="offers-h">This week's local offers</h2>
+          <a class="more" href="/offers/">All offers →</a>
+        </div>
+        <div class="grid">{offers.map((o) => <OfferCard offer={o} />)}</div>
+      </section>
+    )}
+
+    <NewsletterBand />
+
+    {sections.map((s) => (
+      <section aria-labelledby={`sec-${s.slug}`}>
+        <div class="section-head">
+          <h2 id={`sec-${s.slug}`}>{s.label}</h2>
+          <a class="more" href={`/category/${s.slug}/`}>More {s.label} →</a>
+        </div>
+        <div class="grid">{s.items.map((a) => <ArticleCard article={a} />)}</div>
+      </section>
+    ))}
+
+    <PromoteBand />
+  </div>
+</BaseLayout>

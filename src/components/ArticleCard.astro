@@ -1,0 +1,19 @@
+---
+import type { Article } from '../lib/content';
+import { articleUrl } from '../lib/content';
+import { SITE, CATEGORIES, formatDate } from '../lib/site';
+
+interface Props { article: Article; showCategory?: boolean }
+const { article, showCategory = false } = Astro.props;
+const { title, date, image, imageAlt, category } = article.data;
+---
+<article class="card">
+  <a href={articleUrl(article)} tabindex="-1" aria-hidden="true">
+    {image
+      ? <img class="media" src={image} alt={imageAlt ?? ''} loading="lazy" decoding="async" />
+      : <div class="media ph">{SITE.name}</div>}
+  </a>
+  {showCategory && <span class="kicker">{CATEGORIES[category]}</span>}
+  <h3><a href={articleUrl(article)}>{title}</a></h3>
+  <time class="meta" datetime={date.toISOString()}>{formatDate(date)}</time>
+</article>

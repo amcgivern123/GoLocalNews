@@ -1,0 +1,37 @@
+---
+import { SITE, CATEGORIES, hub, isHub } from '../lib/site';
+import Wordmark from './Wordmark.astro';
+const year = new Date().getFullYear();
+const social = Object.entries(SITE.social).filter(([, url]) => url);
+---
+<footer class="footer">
+  <div class="container footer-cols">
+    <div class="footer-brand">
+      <span class="footer-logo"><img class="logo-icon" src={SITE.brand.icon} alt="" width="36" height="36" /><span class="logo-text"><Wordmark /></span></span>
+      <p>Championing the independent businesses that make {SITE.town} tick.</p>
+      {!isHub && <p>Part of the <a class="more" href={hub.domain}>{hub.name}</a> network.</p>}
+    </div>
+    <nav aria-label="Footer sections">
+      <h2>Sections</h2>
+      <a href="/latest/">Latest</a>
+      <a href="/offers/">Offers</a>
+      {Object.entries(CATEGORIES).map(([slug, label]) => <a href={`/category/${slug}/`}>{label}</a>)}
+    </nav>
+    <nav aria-label="About">
+      <h2>About</h2>
+      <a href="/about/">About us</a>
+      <a href="/contact/">Contact</a>
+      <a href="/submit/">Submit your news</a>
+      <a href="/advertise/">Advertise</a>
+      <a href="/editorial-policy/">Editorial policy</a>
+      <a href="/privacy/">Privacy</a>
+    </nav>
+    <nav aria-label="Follow">
+      <h2>Follow</h2>
+      {social.map(([name, url]) => <a href={url} rel="noopener">{name[0].toUpperCase() + name.slice(1)}</a>)}
+      <a href="/#newsletter">Newsletter</a>
+      <a href="/rss.xml">RSS feed</a>
+    </nav>
+  </div>
+  <div class="container copyright">© {year} {SITE.name} · {SITE.host}</div>
+</footer>

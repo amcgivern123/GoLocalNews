@@ -1,0 +1,17 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { SITE, hub } from '../lib/site';
+---
+<BaseLayout title="Editorial policy" description={`How ${SITE.name} chooses, labels and corrects stories.`}>
+  <div class="page">
+    <h1>Editorial policy</h1>
+    <h2>What we publish</h2>
+    <p>We cover news about local businesses: openings, investment, jobs, awards, community work and offers of genuine interest to readers in {SITE.town}.</p>
+    <h2>Press releases and paid content</h2>
+    <p>Some articles are supplied or paid for by the businesses they feature. These are clearly labelled "Press release", and links to the business's own website are marked as sponsored.</p>
+    <h2>Shared stories</h2>
+    <p>Articles may be published across the {hub.name} network of local titles, sometimes with a short introduction for each site's readers.</p>
+    <h2>Corrections</h2>
+    <p>If we get something wrong, <a class="more" href="/contact/">tell us</a>. We correct factual errors promptly and note significant changes at the foot of the article.</p>
+  </div>
+</BaseLayout>

@@ -1,0 +1,22 @@
+---
+import type { GetStaticPaths, Page } from 'astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ArticleCard from '../../components/ArticleCard.astro';
+import { getArticles, type Article } from '../../lib/content';
+import { SITE } from '../../lib/site';
+
+export const getStaticPaths = (async ({ paginate }) => {
+  return paginate(await getArticles(), { pageSize: 24 });
+}) satisfies GetStaticPaths;
+
+const { page } = Astro.props as { page: Page<Article> };
+const title = page.currentPage > 1 ? `Latest news – page ${page.currentPage}` : 'Latest news';
+---
+<BaseLayout title={title} description={`The latest local business news from across ${SITE.town}.`}>
+  <div class="section-head"><h1>Latest news</h1></div>
+  <div class="grid">{page.data.map((a) => <ArticleCard article={a} showCategory />)}</div>
+  <nav class="pager" aria-label="Pages">
+    <span>{page.url.prev && <a href={page.url.prev}>← Newer</a>}</span>
+    <span>{page.url.next && <a href={page.url.next}>Older →</a>}</span>
+  </nav>
+</BaseLayout>

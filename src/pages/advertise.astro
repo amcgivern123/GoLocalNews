@@ -1,0 +1,12 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { SITE } from '../lib/site';
+---
+<BaseLayout title="Advertise" description={`Promote your ${SITE.town} business to local readers.`}>
+  <div class="page">
+    <h1>Advertise with us</h1>
+    <p>Reach people across {SITE.town} who want to support local businesses.</p>
+    <p>[YOUR ADVERTISING OPTIONS AND PRICES]</p>
+    <p><a class="btn btn-accent" href="/submit/">Get in touch</a></p>
+  </div>
+</BaseLayout>

@@ -1,0 +1,32 @@
+---
+import type { GetStaticPaths, Page } from 'astro';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import ArticleCard from '../../../components/ArticleCard.astro';
+import { getArticles, type Article } from '../../../lib/content';
+import { SITE, CATEGORIES, CATEGORY_SLUGS, type CategorySlug } from '../../../lib/site';
+
+export const getStaticPaths = (async ({ paginate }) => {
+  const articles = await getArticles();
+  return CATEGORY_SLUGS.flatMap((category) =>
+    paginate(articles.filter((a) => a.data.category === category), {
+      params: { category },
+      pageSize: 24,
+    }),
+  );
+}) satisfies GetStaticPaths;
+
+const { page } = Astro.props as { page: Page<Article> };
+const category = Astro.params.category as CategorySlug;
+const label = CATEGORIES[category];
+const title = page.currentPage > 1 ? `${label} – page ${page.currentPage}` : label;
+---
+<BaseLayout title={title} description={`${label} news from local businesses across ${SITE.town}.`}>
+  <div class="section-head"><h1>{label}</h1></div>
+  {page.data.length === 0
+    ? <p>No stories here yet. <a class="more" href="/submit/">Got one for us?</a></p>
+    : <div class="grid">{page.data.map((a) => <ArticleCard article={a} />)}</div>}
+  <nav class="pager" aria-label="Pages">
+    <span>{page.url.prev && <a href={page.url.prev}>← Newer</a>}</span>
+    <span>{page.url.next && <a href={page.url.next}>Older →</a>}</span>
+  </nav>
+</BaseLayout>
