@@ -1,0 +1,65 @@
+# Publishes the whole network whenever an article or setting changes,
+# and every morning so scheduled stories appear and old offers drop off.
+# Secrets needed (GitHub > Settings > Secrets and variables > Actions):
+#   ANTHROPIC_API_KEY  - for the local intros (optional; skipped if missing)
+#   DEPLOY_HOST        - e.g. youruser@yourserver.knownhost.com
+#   DEPLOY_SSH_KEY     - private SSH key that can log in to KnownHost
+#   DEPLOY_PORT        - optional, if your SSH port isn't 22
+name: Publish network
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "7 5 * * *"   # about 5am UK time
+  workflow_dispatch:
+
+concurrency:
+  group: publish
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Write local intros
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: npm run localise
+
+      - name: Save new intros back to the repository
+        run: |
+          if [ -n "$(git status --porcelain src/content/intros)" ]; then
+            git config user.name "publish-bot"
+            git config user.email "publish-bot@users.noreply.github.com"
+            git add src/content/intros
+            git commit -m "Add local intros"
+            git push
+          fi
+
+      - name: Build every site
+        run: npm run build:all
+
+      - name: Upload to KnownHost
+        env:
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_PORT: ${{ secrets.DEPLOY_PORT }}
+          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+        run: |
+          if [ -z "$DEPLOY_HOST" ] || [ -z "$DEPLOY_SSH_KEY" ]; then echo "Deploy secrets not set yet, skipping upload."; exit 0; fi
+          mkdir -p ~/.ssh
+          echo "$DEPLOY_SSH_KEY" > ~/.ssh/id_deploy && chmod 600 ~/.ssh/id_deploy
+          ssh-keyscan -p "${DEPLOY_PORT:-22}" "${DEPLOY_HOST#*@}" >> ~/.ssh/known_hosts
+          DEPLOY_SSH_OPTS="-i $HOME/.ssh/id_deploy -o IdentitiesOnly=yes" npm run deploy
