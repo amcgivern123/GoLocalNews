@@ -1,0 +1,182 @@
+{
+  "hub": "golocalnews",
+  "contactEmail": "",
+  "categories": {
+    "new-openings": "New Openings",
+    "food-drink": "Food & Drink",
+    "trades-services": "Trades & Services",
+    "retail": "Retail",
+    "events": "Events",
+    "community": "Community"
+  },
+  "sites": [
+    {
+      "id": "golocalnews",
+      "name": "Go Local News",
+      "domain": "https://golocalnews.co.uk",
+      "town": "Northern Ireland",
+      "tagline": "Local business news from every corner of Northern Ireland",
+      "logo": {
+        "words": [
+          "Go",
+          "Local",
+          "News"
+        ],
+        "highlight": 1,
+        "initials": "GL",
+        "shape": "circle"
+      },
+      "colors": {
+        "accent": "#0b6e4f",
+        "ink": "#10241d"
+      }
+    },
+    {
+      "id": "belfastlocalbusiness",
+      "name": "Belfast Local Business",
+      "domain": "https://belfastlocalbusiness.co.uk",
+      "town": "Belfast",
+      "tagline": "News, offers and stories from the businesses on your doorstep",
+      "logo": {
+        "words": [
+          "Belfast",
+          "Local",
+          "Business"
+        ],
+        "highlight": 1,
+        "initials": "BLB",
+        "shape": "square"
+      },
+      "colors": {
+        "accent": "#b3261e",
+        "ink": "#1a1a1a"
+      }
+    },
+    {
+      "id": "wearebelfast",
+      "name": "We Are Belfast",
+      "domain": "https://wearebelfast.co.uk",
+      "town": "Belfast",
+      "tagline": "The people and businesses that make this city",
+      "logo": {
+        "words": [
+          "We",
+          "Are",
+          "Belfast"
+        ],
+        "highlight": 2,
+        "initials": "WAB",
+        "shape": "rounded"
+      },
+      "colors": {
+        "accent": "#1f4e8c",
+        "ink": "#0f1d33"
+      }
+    },
+    {
+      "id": "localinbelfast",
+      "name": "Local in Belfast",
+      "domain": "https://localinbelfast.co.uk",
+      "town": "Belfast",
+      "tagline": "Openings, offers and news from Belfast's neighbourhoods",
+      "logo": {
+        "words": [
+          "Local",
+          "in",
+          "Belfast"
+        ],
+        "highlight": 0,
+        "initials": "LiB",
+        "shape": "circle"
+      },
+      "colors": {
+        "accent": "#c2410c",
+        "ink": "#1c1917"
+      }
+    },
+    {
+      "id": "bestinbelfast",
+      "name": "Best in Belfast",
+      "domain": "https://bestinbelfast.co.uk",
+      "town": "Belfast",
+      "tagline": "Celebrating the best independent businesses in Belfast",
+      "logo": {
+        "words": [
+          "Best",
+          "in",
+          "Belfast"
+        ],
+        "highlight": 0,
+        "initials": "BiB",
+        "shape": "badge"
+      },
+      "colors": {
+        "accent": "#6b21a8",
+        "ink": "#1d1030"
+      }
+    },
+    {
+      "id": "bestinlisburn",
+      "name": "Best in Lisburn",
+      "domain": "https://bestinlisburn.co.uk",
+      "town": "Lisburn",
+      "tagline": "Celebrating the best independent businesses in Lisburn",
+      "logo": {
+        "words": [
+          "Best",
+          "in",
+          "Lisburn"
+        ],
+        "highlight": 0,
+        "initials": "BiL",
+        "shape": "badge"
+      },
+      "colors": {
+        "accent": "#15803d",
+        "ink": "#0f2418"
+      }
+    },
+    {
+      "id": "youronlineguide",
+      "name": "Your Online Guide",
+      "domain": "https://youronlineguide.co.uk",
+      "town": "Northern Ireland",
+      "tagline": "Your guide to local businesses across Northern Ireland",
+      "logo": {
+        "words": [
+          "Your",
+          "Online",
+          "Guide"
+        ],
+        "highlight": 1,
+        "initials": "YOG",
+        "shape": "rounded"
+      },
+      "colors": {
+        "accent": "#0e7490",
+        "ink": "#0b2430"
+      }
+    },
+    {
+      "id": "yourlocalexperts",
+      "name": "Your Local Experts",
+      "domain": "https://your-local-experts.com",
+      "town": "Northern Ireland",
+      "tagline": "News from the experts behind Northern Ireland's small businesses",
+      "logo": {
+        "words": [
+          "Your",
+          "Local",
+          "Experts"
+        ],
+        "highlight": 2,
+        "initials": "YLE",
+        "shape": "square"
+      },
+      "colors": {
+        "accent": "#b45309",
+        "ink": "#24190d"
+      }
+    }
+  ]
+}

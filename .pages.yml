@@ -1,0 +1,239 @@
+# Pages CMS editor settings (https://app.pagescms.org)
+# Lets you add and edit articles and offers through simple web forms.
+
+media:
+  input: public/images
+  output: /images
+
+content:
+  - name: articles
+    label: Articles
+    type: collection
+    path: src/content/articles
+    format: yaml-frontmatter
+    filename: { template: "{year}-{month}-{day}-{primary}.md", field: create }
+    view: { primary: "title", sort: "date", order: "desc" }
+    fields:
+      - name: title
+        label: Headline
+        type: string
+        required: true
+      - name: description
+        label: Summary
+        type: text
+        required: true
+        description: "One or two sentences. Shown under the headline and in Google results."
+      - name: date
+        label: Publish date
+        type: date
+        required: true
+        options:
+          format: yyyy-MM-dd
+        description: "Set a future date to schedule it (it appears after the daily rebuild on that day)."
+      - name: category
+        label: Section
+        type: select
+        required: true
+        options:
+          values:
+            - name: new-openings
+              label: New Openings
+            - name: food-drink
+              label: Food & Drink
+            - name: trades-services
+              label: Trades & Services
+            - name: retail
+              label: Retail
+            - name: events
+              label: Events
+            - name: community
+              label: Community
+      - name: area
+        label: Area
+        type: string
+        description: "e.g. Lisburn Road, Ormeau Road, Botanic"
+      - name: author
+        label: Author
+        type: string
+        description: "Leave blank to show each site's own name. Use a name with a bio file (e.g. Adrian) to link to an author page."
+      - name: image
+        label: Main photo
+        type: image
+        description: "Landscape photos work best, ideally at least 1200px wide."
+      - name: imageAlt
+        label: Photo description
+        type: string
+        description: "Describe the photo in a few words. Helps Google and blind readers."
+      - name: imageCaption
+        label: Photo caption
+        type: string
+        description: "Shown under the photo. Optional."
+      - name: image2
+        label: Second photo
+        type: image
+        description: "Optional. Shown after the article text."
+      - name: image2Alt
+        label: Second photo description
+        type: string
+      - name: image2Caption
+        label: Second photo caption
+        type: string
+      - name: youtube
+        label: YouTube video link
+        type: string
+        description: "Paste the YouTube link. It appears between the first and second sub-headings."
+      - name: pinned
+        label: Pin to top of homepage
+        type: boolean
+        default: false
+        description: "Keeps this as the lead story. Untick it when you want to replace it."
+      - name: pinnedUntil
+        label: Pinned until
+        type: date
+        options:
+          format: yyyy-MM-dd
+        description: "Optional. The story stops being the lead after this date."
+      - name: sites
+        label: Publish on
+        type: select
+        default: [all]
+        options:
+          multiple: true
+          values:
+              - name: all
+                label: All sites
+              - name: belfastlocalbusiness
+                label: Belfast Local Business
+              - name: wearebelfast
+                label: We Are Belfast
+              - name: localinbelfast
+                label: Local in Belfast
+              - name: bestinbelfast
+                label: Best in Belfast
+              - name: bestinlisburn
+                label: Best in Lisburn
+              - name: youronlineguide
+                label: Your Online Guide
+              - name: yourlocalexperts
+                label: Your Local Experts
+        description: "Choose All sites, or pick particular sites. Go Local News always carries every story."
+      - name: canonicalToHub
+        label: Point copies to Go Local News (canonical)
+        type: boolean
+        default: true
+        description: "On: Google treats Go Local News as the original. Off: every copy stands on its own."
+      - name: rankOn
+        label: Let these sites' copies rank on their own
+        type: select
+        options:
+          multiple: true
+          values:
+              - name: belfastlocalbusiness
+                label: Belfast Local Business
+              - name: wearebelfast
+                label: We Are Belfast
+              - name: localinbelfast
+                label: Local in Belfast
+              - name: bestinbelfast
+                label: Best in Belfast
+              - name: bestinlisburn
+                label: Best in Lisburn
+              - name: youronlineguide
+                label: Your Online Guide
+              - name: yourlocalexperts
+                label: Your Local Experts
+        description: "Optional. Only used when the canonical setting is on."
+      - name: pressRelease
+        label: Paid press release
+        type: boolean
+        default: false
+        description: "Adds a Press release label and marks the business link as sponsored."
+      - name: business
+        label: Business details (shown at the foot of the article)
+        type: object
+        fields:
+          - name: name
+            label: Business name
+            type: string
+          - name: address
+            label: Address
+            type: string
+          - name: phone
+            label: Phone
+            type: string
+          - name: email
+            label: Email
+            type: string
+          - name: website
+            label: Website
+            type: string
+          - name: map
+            label: Google Maps embed
+            type: text
+            description: "In Google Maps: Share > Embed a map > Copy HTML, then paste it here."
+      - name: draft
+        label: Draft (hide from site)
+        type: boolean
+        default: false
+      - name: body
+        label: Article
+        type: rich-text
+        options:
+          format: markdown
+
+  - name: offers
+    label: Offers
+    type: collection
+    path: src/content/offers
+    format: yaml-frontmatter
+    filename: { template: "{year}-{month}-{day}-{primary}.md", field: create }
+    view: { primary: "business", sort: "ends", order: "asc" }
+    fields:
+      - name: business
+        label: Business name
+        type: string
+        required: true
+      - name: offer
+        label: The offer
+        type: string
+        required: true
+        description: "Short and punchy, e.g. 2 for 1 lunches, Mon–Wed"
+      - name: area
+        label: Area
+        type: string
+      - name: ends
+        label: Offer ends
+        type: date
+        required: true
+        options:
+          format: yyyy-MM-dd
+        description: "The offer disappears from the site automatically after this date."
+      - name: details
+        label: Details
+        type: text
+      - name: link
+        label: Business website or social link
+        type: string
+      - name: sites
+        label: Show on
+        type: select
+        default: [all]
+        options:
+          multiple: true
+          values:
+              - name: all
+                label: All sites
+              - name: belfastlocalbusiness
+                label: Belfast Local Business
+              - name: wearebelfast
+                label: We Are Belfast
+              - name: localinbelfast
+                label: Local in Belfast
+              - name: bestinbelfast
+                label: Best in Belfast
+              - name: bestinlisburn
+                label: Best in Lisburn
+              - name: youronlineguide
+                label: Your Online Guide
+              - name: yourlocalexperts
+                label: Your Local Experts
