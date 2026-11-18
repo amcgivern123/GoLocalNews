@@ -1,12 +1,12 @@
 {
-  "golocalnews": "/home/golocalnewsguy/public_html/",
-  "belfastlocalbusiness": "/home/belfastlocalbusg/public_html/",
-  "wearebelfast": "/home/wearebelfastguy/public_html/",
-  "localinbelfast": "/home/localinbelfastg/public_html/",
-  "bestinbelfast": "/home/bestinbelfastguy/public_html/",
-  "bestinlisburn": "/home/bestinlisburnguy/public_html/",
-  "youronlineguide": "/home/youronlineguideg/public_html/",
-  "yourlocalexperts": "/home/yourlocalexpertg/public_html/"
+  "golocalnews":          { "user": "golocalnewsguy", "path": "/home/golocalnewsguy/public_html/" },
+  "belfastlocalbusiness": { "user": "belfastlocalbusg", "path": "/home/belfastlocalbusg/public_html/" },
+  "wearebelfast":         { "user": "wearebelfastguy", "path": "/home/wearebelfastguy/public_html/" },
+  "localinbelfast":       { "user": "localinbelfastg", "path": "/home/localinbelfastg/public_html/" },
+  "bestinbelfast":        { "user": "bestinbelfastguy", "path": "/home/bestinbelfastguy/public_html/" },
+  "bestinlisburn":        { "user": "bestinlisburnguy", "path": "/home/bestinlisburnguy/public_html/" },
+  "youronlineguide":      { "user": "youronlineguideg", "path": "/home/youronlineguideg/public_html/" },
+  "yourlocalexperts":     { "user": "yourlocalexpertg", "path": "/home/yourlocalexpertg/public_html/" }
 }
 
 
