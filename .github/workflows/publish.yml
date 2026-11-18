@@ -25,9 +25,9 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           node-version: 22
           cache: npm
@@ -61,5 +61,24 @@ jobs:
           if [ -z "$DEPLOY_HOST" ] || [ -z "$DEPLOY_SSH_KEY" ]; then echo "Deploy secrets not set yet, skipping upload."; exit 0; fi
           mkdir -p ~/.ssh
           echo "$DEPLOY_SSH_KEY" > ~/.ssh/id_deploy && chmod 600 ~/.ssh/id_deploy
-          ssh-keyscan -p "${DEPLOY_PORT:-22}" "${DEPLOY_HOST#*@}" >> ~/.ssh/known_hosts
-          DEPLOY_SSH_OPTS="-i $HOME/.ssh/id_deploy -o IdentitiesOnly=yes" npm run deploy
+          # Strip Windows line endings and make sure the key ends with a newline.
+          printf '%s\n' "$DEPLOY_SSH_KEY" | tr -d '\r' > ~/.ssh/id_deploy && chmod 600 ~/.ssh/id_deploy
+          SERVER="${DEPLOY_HOST#*@}"
+          ssh-keyscan -p "${DEPLOY_PORT:-22}" "$SERVER" >> ~/.ssh/known_hosts 2>/dev/null
+
+          echo "--- Key check (safe to share) ---"
+          if ! ssh-keygen -y -f ~/.ssh/id_deploy > /tmp/derived.pub 2>/tmp/keyerr; then
+            echo "KEY PROBLEM: DEPLOY_SSH_KEY is not a usable private key: $(cat /tmp/keyerr)"
+            echo "Re-copy the PRIVATE key from cPanel (with no passphrase), from -----BEGIN to -----END."
+            exit 1
+          fi
+          ssh-keygen -l -f /tmp/derived.pub
+          echo "Public key ends with: ...$(awk '{print $2}' /tmp/derived.pub | tail -c 25)"
+          echo "Compare that ending with the public key authorized in cPanel."
+
+          echo "--- Login test for the first site in deploy.json ---"
+          FIRST_USER=$(node -e 'const d=require("./deploy.json");const v=Object.values(d)[0];console.log(typeof v==="string"?process.env.DEPLOY_HOST.split("@")[0]:v.user)')
+          ssh -v -p "${DEPLOY_PORT:-22}" -i ~/.ssh/id_deploy -o IdentitiesOnly=yes -o BatchMode=yes "$FIRST_USER@$SERVER" true 2>&1 \
+            | grep -E "Authenticating to|Offering public key|Server accepts key|Authenticated to|Authentications that can continue|Permission denied|Load key|invalid format" || true
+
+          DEPLOY_SSH_OPTS="-i $HOME/.ssh/id_deploy -o IdentitiesOnly=yes -o BatchMode=yes" npm run deploy
