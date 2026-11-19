@@ -57,6 +57,7 @@ jobs:
           DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
           DEPLOY_PORT: ${{ secrets.DEPLOY_PORT }}
           DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          DEPLOY_SSH_PASSPHRASE: ${{ secrets.DEPLOY_SSH_PASSPHRASE }}
         run: |
           if [ -z "$DEPLOY_HOST" ] || [ -z "$DEPLOY_SSH_KEY" ]; then echo "Deploy secrets not set yet, skipping upload."; exit 0; fi
           mkdir -p ~/.ssh
@@ -74,10 +75,21 @@ jobs:
           fi
           export SSH_EXTRA="-o StrictHostKeyChecking=accept-new"
 
+          # If the key was made with a password, unlock it using the DEPLOY_SSH_PASSPHRASE secret.
+          if [ -n "$DEPLOY_SSH_PASSPHRASE" ]; then
+            if ssh-keygen -p -P "$DEPLOY_SSH_PASSPHRASE" -N "" -f ~/.ssh/id_deploy > /dev/null 2>&1; then
+              echo "Key unlocked with DEPLOY_SSH_PASSPHRASE."
+            else
+              echo "KEY PROBLEM: DEPLOY_SSH_PASSPHRASE does not unlock DEPLOY_SSH_KEY."
+              exit 1
+            fi
+          fi
+
           echo "--- Key check (safe to share) ---"
           if ! ssh-keygen -y -f ~/.ssh/id_deploy > /tmp/derived.pub 2>/tmp/keyerr; then
             echo "KEY PROBLEM: DEPLOY_SSH_KEY is not a usable private key: $(cat /tmp/keyerr)"
-            echo "Re-copy the PRIVATE key from cPanel (with no passphrase), from -----BEGIN to -----END."
+            echo "If it mentions a passphrase: add the key's password as the DEPLOY_SSH_PASSPHRASE secret."
+            echo "Otherwise re-copy the whole PRIVATE key from cPanel, including the BEGIN and END lines."
             exit 1
           fi
           ssh-keygen -l -f /tmp/derived.pub
