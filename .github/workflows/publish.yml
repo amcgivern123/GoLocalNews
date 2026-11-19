@@ -64,7 +64,15 @@ jobs:
           # Strip Windows line endings and make sure the key ends with a newline.
           printf '%s\n' "$DEPLOY_SSH_KEY" | tr -d '\r' > ~/.ssh/id_deploy && chmod 600 ~/.ssh/id_deploy
           SERVER="${DEPLOY_HOST#*@}"
-          ssh-keyscan -p "${DEPLOY_PORT:-22}" "$SERVER" >> ~/.ssh/known_hosts 2>/dev/null
+          echo "--- Reaching $SERVER on port ${DEPLOY_PORT:-22} ---"
+          if ssh-keyscan -T 15 -p "${DEPLOY_PORT:-22}" "$SERVER" > /tmp/hostkeys 2>/tmp/scanerr && [ -s /tmp/hostkeys ]; then
+            cat /tmp/hostkeys >> ~/.ssh/known_hosts
+            echo "Server reached."
+          else
+            echo "WARNING: could not read the server's identity: $(tail -n 3 /tmp/scanerr)"
+            echo "If this keeps happening, the server's firewall may be blocking GitHub (ask KnownHost)."
+          fi
+          export SSH_EXTRA="-o StrictHostKeyChecking=accept-new"
 
           echo "--- Key check (safe to share) ---"
           if ! ssh-keygen -y -f ~/.ssh/id_deploy > /tmp/derived.pub 2>/tmp/keyerr; then
@@ -78,7 +86,7 @@ jobs:
 
           echo "--- Login test for the first site in deploy.json ---"
           FIRST_USER=$(node -e 'const d=require("./deploy.json");const v=Object.values(d)[0];console.log(typeof v==="string"?process.env.DEPLOY_HOST.split("@")[0]:v.user)')
-          ssh -v -p "${DEPLOY_PORT:-22}" -i ~/.ssh/id_deploy -o IdentitiesOnly=yes -o BatchMode=yes "$FIRST_USER@$SERVER" true 2>&1 \
+          ssh -v -p "${DEPLOY_PORT:-22}" -i ~/.ssh/id_deploy -o IdentitiesOnly=yes -o BatchMode=yes $SSH_EXTRA "$FIRST_USER@$SERVER" true 2>&1 \
             | grep -E "Authenticating to|Offering public key|Server accepts key|Authenticated to|Authentications that can continue|Permission denied|Load key|invalid format" || true
 
-          DEPLOY_SSH_OPTS="-i $HOME/.ssh/id_deploy -o IdentitiesOnly=yes -o BatchMode=yes" npm run deploy
+          DEPLOY_SSH_OPTS="-i $HOME/.ssh/id_deploy -o IdentitiesOnly=yes -o BatchMode=yes $SSH_EXTRA" npm run deploy
