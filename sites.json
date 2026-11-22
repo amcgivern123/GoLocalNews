@@ -14,8 +14,8 @@
       "id": "golocalnews",
       "name": "Go Local News",
       "domain": "https://golocalnews.co.uk",
-      "town": "Northern Ireland",
-      "tagline": "Local business news from every corner of Northern Ireland",
+      "town": "the UK",
+      "tagline": "Local business news from towns and cities across the UK",
       "logo": {
         "words": [
           "Go",
@@ -27,8 +27,8 @@
         "shape": "circle"
       },
       "colors": {
-        "accent": "#0b6e4f",
-        "ink": "#10241d"
+        "accent": "#1f7a3a",
+        "ink": "#13284a"
       }
     },
     {
@@ -48,8 +48,8 @@
         "shape": "square"
       },
       "colors": {
-        "accent": "#b3261e",
-        "ink": "#1a1a1a"
+        "accent": "#2f6f3a",
+        "ink": "#13284a"
       }
     },
     {
@@ -69,8 +69,8 @@
         "shape": "rounded"
       },
       "colors": {
-        "accent": "#1f4e8c",
-        "ink": "#0f1d33"
+        "accent": "#8a6a1c",
+        "ink": "#13284a"
       }
     },
     {
@@ -90,8 +90,8 @@
         "shape": "circle"
       },
       "colors": {
-        "accent": "#c2410c",
-        "ink": "#1c1917"
+        "accent": "#3d7a3a",
+        "ink": "#13284a"
       }
     },
     {
@@ -111,8 +111,8 @@
         "shape": "badge"
       },
       "colors": {
-        "accent": "#6b21a8",
-        "ink": "#1d1030"
+        "accent": "#7d6420",
+        "ink": "#13284a"
       }
     },
     {
@@ -132,8 +132,8 @@
         "shape": "badge"
       },
       "colors": {
-        "accent": "#15803d",
-        "ink": "#0f2418"
+        "accent": "#9b2226",
+        "ink": "#13284a"
       }
     },
     {
@@ -153,8 +153,8 @@
         "shape": "rounded"
       },
       "colors": {
-        "accent": "#0e7490",
-        "ink": "#0b2430"
+        "accent": "#0e6f86",
+        "ink": "#13284a"
       }
     },
     {
@@ -174,9 +174,112 @@
         "shape": "square"
       },
       "colors": {
-        "accent": "#b45309",
-        "ink": "#24190d"
+        "accent": "#8e2a2a",
+        "ink": "#13284a"
+      }
+    },
+    {
+      "id": "localni",
+      "name": "Local NI",
+      "domain": "https://local-ni.co.uk",
+      "town": "Northern Ireland",
+      "tagline": "Local business news from across Northern Ireland",
+      "logo": {
+        "words": [
+          "Local",
+          "NI"
+        ],
+        "highlight": 1,
+        "initials": "NI",
+        "shape": "square"
+      },
+      "colors": {
+        "accent": "#26733a",
+        "ink": "#13284a"
+      }
+    },
+    {
+      "id": "wearenewry",
+      "name": "We Are Newry",
+      "domain": "https://wearenewry.co.uk",
+      "town": "Newry",
+      "tagline": "News, offers and stories from Newry's local businesses",
+      "logo": {
+        "words": [
+          "We",
+          "Are",
+          "Newry"
+        ],
+        "highlight": 2,
+        "initials": "WAN",
+        "shape": "square"
+      },
+      "colors": {
+        "accent": "#1e7b3c",
+        "ink": "#13284a"
+      }
+    },
+    {
+      "id": "edinburghpost",
+      "name": "Edinburgh Post",
+      "domain": "https://edinburghpost.co.uk",
+      "town": "Edinburgh",
+      "tagline": "Local business news from across Edinburgh",
+      "logo": {
+        "words": [
+          "Edinburgh",
+          "Post"
+        ],
+        "highlight": 1,
+        "initials": "EP",
+        "shape": "square"
+      },
+      "colors": {
+        "accent": "#a3213a",
+        "ink": "#13284a"
+      }
+    },
+    {
+      "id": "liverpoolfreepress",
+      "name": "Liverpool Free Press",
+      "domain": "https://liverpoolfreepress.co.uk",
+      "town": "Liverpool",
+      "tagline": "Local business news from across Liverpool and Merseyside",
+      "logo": {
+        "words": [
+          "Liverpool",
+          "Free",
+          "Press"
+        ],
+        "highlight": 1,
+        "initials": "LFP",
+        "shape": "square"
+      },
+      "colors": {
+        "accent": "#b0262f",
+        "ink": "#13284a"
+      }
+    },
+    {
+      "id": "newcastleherald",
+      "name": "Newcastle Herald",
+      "domain": "https://newcastleherald.co.uk",
+      "town": "Newcastle upon Tyne",
+      "tagline": "Local business news from across Newcastle upon Tyne and Tyneside",
+      "logo": {
+        "words": [
+          "Newcastle",
+          "Herald"
+        ],
+        "highlight": 1,
+        "initials": "NH",
+        "shape": "square"
+      },
+      "colors": {
+        "accent": "#9b2226",
+        "ink": "#13284a"
       }
     }
   ]
 }
+
