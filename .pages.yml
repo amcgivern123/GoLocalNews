@@ -116,6 +116,16 @@ content:
                 label: Your Online Guide
               - name: yourlocalexperts
                 label: Your Local Experts
+              - name: localni
+                label: Local NI
+              - name: wearenewry
+                label: We Are Newry
+              - name: edinburghpost
+                label: Edinburgh Post
+              - name: liverpoolfreepress
+                label: Liverpool Free Press
+              - name: newcastleherald
+                label: Newcastle Herald
         description: "Choose All sites, or pick particular sites. Go Local News always carries every story."
       - name: canonicalToHub
         label: Point copies to Go Local News (canonical)
@@ -142,6 +152,16 @@ content:
                 label: Your Online Guide
               - name: yourlocalexperts
                 label: Your Local Experts
+              - name: localni
+                label: Local NI
+              - name: wearenewry
+                label: We Are Newry
+              - name: edinburghpost
+                label: Edinburgh Post
+              - name: liverpoolfreepress
+                label: Liverpool Free Press
+              - name: newcastleherald
+                label: Newcastle Herald
         description: "Optional. Only used when the canonical setting is on."
       - name: pressRelease
         label: Paid press release
@@ -237,3 +257,13 @@ content:
                 label: Your Online Guide
               - name: yourlocalexperts
                 label: Your Local Experts
+              - name: localni
+                label: Local NI
+              - name: wearenewry
+                label: We Are Newry
+              - name: edinburghpost
+                label: Edinburgh Post
+              - name: liverpoolfreepress
+                label: Liverpool Free Press
+              - name: newcastleherald
+                label: Newcastle Herald
