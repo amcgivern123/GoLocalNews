@@ -25,11 +25,17 @@ const links = [
 <header class="masthead">
   <div class="container">
     <div>
-      <a class="logo" href="/" aria-label={`${SITE.name} home`}>
-        <img class="logo-icon" src={SITE.brand.icon} alt="" width="48" height="48" />
-        <span class="logo-text"><Wordmark /></span>
-      </a>
-      <p class="tagline">{SITE.tagline}</p>
+      {SITE.fullLogo ? (
+        <a class="logo logo-full" href="/">
+          <img src={SITE.fullLogo.src} alt={SITE.name} width={SITE.fullLogo.width} height={SITE.fullLogo.height} fetchpriority="high" />
+        </a>
+      ) : (<>
+        <a class="logo" href="/" aria-label={`${SITE.name} home`}>
+          <img class="logo-icon" src={SITE.brand.icon} alt="" width="48" height="48" />
+          <span class="logo-text"><Wordmark /></span>
+        </a>
+        <p class="tagline">{SITE.tagline}</p>
+      </>)}
     </div>
     <a class="btn btn-accent" href="/submit/">Get your business featured</a>
   </div>

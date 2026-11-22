@@ -7,9 +7,11 @@ const social = Object.entries(SITE.social).filter(([, url]) => url);
 <footer class="footer">
   <div class="container footer-cols">
     <div class="footer-brand">
-      <span class="footer-logo"><img class="logo-icon" src={SITE.brand.icon} alt="" width="36" height="36" /><span class="logo-text"><Wordmark /></span></span>
+      {SITE.fullLogo
+        ? <img class="footer-logo-full" src={SITE.fullLogo.src} alt={SITE.name} width={SITE.fullLogo.width} height={SITE.fullLogo.height} loading="lazy" />
+        : <span class="footer-logo"><img class="logo-icon" src={SITE.brand.icon} alt="" width="36" height="36" /><span class="logo-text"><Wordmark /></span></span>}
       <p>Championing the independent businesses that make {SITE.town} tick.</p>
-      {!isHub && <p>Part of the <a class="more" href={hub.domain}>{hub.name}</a> network.</p>}
+      {!isHub && <p>Part of the <a class="more" href={hub.domain}>{hub.name}</a> network of local business news sites.</p>}
     </div>
     <nav aria-label="Footer sections">
       <h2>Sections</h2>

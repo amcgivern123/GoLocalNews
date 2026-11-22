@@ -36,6 +36,8 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 .logo-icon { width: 1.1em; height: 1.1em; flex: none; }
 .logo-text span, .footer-logo .logo-text span { color: var(--accent); }
 .logo:hover { text-decoration: none; color: var(--ink); }
+.logo-full img { display: block; height: clamp(64px, 12vw, 96px); width: auto; max-width: 100%; }
+.footer-logo-full { display: block; height: 56px; width: auto; max-width: 100%; }
 .tagline { margin: 6px 0 0; font-size: 15px; color: var(--muted); }
 .mainnav { border-bottom: 1px solid var(--line); }
 .mainnav ul { list-style: none; margin: 0; padding: 12px 0; display: flex; gap: 24px; border-top: 3px solid var(--ink); font-size: 15px; font-weight: 600; overflow-x: auto; white-space: nowrap; }

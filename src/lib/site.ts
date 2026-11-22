@@ -1,8 +1,14 @@
+import fs from 'node:fs';
 import { site, hub, isHub, categories } from './network.mjs';
 
 export { hub, isHub };
 
 const brand = `/brand/${site.id}`;
+// Your own logo files (made by `npm run brand` from brand-src/), if this site has them.
+const fullLogoInfo = `./public${brand}/logo-full.json`;
+const fullLogo = fs.existsSync(fullLogoInfo)
+  ? { src: `${brand}/logo-full.webp`, ...(JSON.parse(fs.readFileSync(fullLogoInfo, 'utf8')) as { width: number; height: number }) }
+  : null;
 
 export const SITE = {
   id: site.id as string,
@@ -16,8 +22,10 @@ export const SITE = {
     `Local business news, new openings and special offers from independent businesses across ${site.town}.`,
   logo: site.logo as { words: string[]; highlight: number; initials: string; shape: string },
   colors: site.colors as { accent: string; ink: string },
+  fullLogo,
   brand: {
-    icon: `${brand}/icon.svg`,
+    icon: fullLogo ? `${brand}/icon-192.png` : `${brand}/icon.svg`,
+    iconType: fullLogo ? 'image/png' : 'image/svg+xml',
     icon48: `${brand}/icon-48.png`,
     appleTouch: `${brand}/apple-touch-icon.png`,
     logoPng: `${brand}/logo.png`,

@@ -43,7 +43,7 @@ const brandVars = `html:root{--accent:${SITE.colors.accent};--ink:${SITE.colors.
   <link rel="canonical" href={canonicalUrl} />
   {noindex ? <meta name="robots" content="noindex" /> : <meta name="robots" content="index, follow, max-image-preview:large" />}
   <meta name="theme-color" content={SITE.colors.accent} />
-  <link rel="icon" href={SITE.brand.icon} type="image/svg+xml" />
+  <link rel="icon" href={SITE.brand.icon} type={SITE.brand.iconType} />
   <link rel="icon" href={SITE.brand.icon48} type="image/png" sizes="48x48" />
   <link rel="apple-touch-icon" href={SITE.brand.appleTouch} />
   <link rel="alternate" type="application/rss+xml" title={SITE.name} href="/rss.xml" />

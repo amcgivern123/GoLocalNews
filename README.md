@@ -20,7 +20,7 @@ One Astro project, built on the Belfast Local Business design, that publishes go
 | `public/brand/<site>/` | Each site's icon, logo and social image, made by `npm run brand`. |
 | `public/images/` | Photos uploaded through the editor. |
 | `public/form.php` | Emails newsletter sign-ups and story submissions to you. |
-| `deploy.json` | The folder on KnownHost for each site. |
+| `deploy.json` | Each site's cPanel username and folder on KnownHost. |
 
 ## Article options (all in the editor)
 
@@ -41,17 +41,21 @@ Edit its entry in `sites.json`:
 
 Then run `npm run brand` to redraw the icons and logos.
 
+### Using your own logo files
+
+Put two files in `brand-src/<site-id>/`: `logo.webp` (the wide logo) and `icon.webp` (the square icon). PNG or JPG also work. Then run `npm run brand`. It removes the plain background around the logo, makes the browser-tab icons and the social sharing image, and the site uses your logo in its header and footer instead of the drawn one. The colours in `sites.json` are still used for buttons and highlights.
+
 ## Adding a site
 
 1. Add it to `sites.json` and its folder to `deploy.json`.
 2. Add it to the two site lists in `.pages.yml` (the "Publish on" and "Let these sites' copies rank" options).
-3. Run `npm run brand`.
+3. Add its logo and icon to `brand-src/<site-id>/` (optional), then run `npm run brand`.
 
 ## Going live (one-off)
 
 1. **GitHub:** create a repository and upload everything in this folder, including the hidden `.pages.yml` and `.github` folder.
-2. **KnownHost:** add each domain in cPanel (Domains), note each one's folder, and put those folders in `deploy.json`. Turn on SSH access and create an SSH key pair.
-3. **GitHub secrets** (Settings → Secrets and variables → Actions): `DEPLOY_HOST` (e.g. `user@server.knownhost.com`), `DEPLOY_SSH_KEY` (the private key), `DEPLOY_PORT` if it isn't 22, and `ANTHROPIC_API_KEY` for the opening lines.
+2. **KnownHost:** each site has its own cPanel account. Put each account's username and folder (usually `/home/<username>/public_html/`) in `deploy.json`. Create one RSA SSH key (no passphrase) in the golocalnewsguy account, then import its public key into every other account (SSH Access → Manage SSH Keys → Import Key) and authorize it there.
+3. **GitHub secrets** (Settings → Secrets and variables → Actions): `DEPLOY_HOST` (the server address, e.g. `golocalnews.co.uk`), `DEPLOY_SSH_KEY` (the private key), `DEPLOY_PORT` if it isn't 22, `DEPLOY_SSH_PASSPHRASE` if the key has a password, and `ANTHROPIC_API_KEY` for the opening lines.
 4. **Forms:** put your email address at the top of `public/form.php`, and optionally `contactEmail` in `sites.json`.
 5. **Editor:** sign in at app.pagescms.org with GitHub and open the repository.
 6. **Google:** add each site to Search Console and submit `/sitemap-index.xml` and `/news-sitemap.xml`.

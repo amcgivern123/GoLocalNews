@@ -82,9 +82,90 @@ function ogSvg(site) {
 <rect x="${x}" y="470" width="${W - 2 * x}" height="5" fill="${site.colors.ink}"/>${domain}</svg>`;
 }
 
+// ---------- Your own logo and icon files (brand-src/<site-id>/logo.* and icon.*) ----------
+
+const findSrc = (id, name) => {
+  const d = path.join(root, 'brand-src', id);
+  if (!fs.existsSync(d)) return null;
+  const f = fs.readdirSync(d).find((x) => /^(.+)\.(webp|png|jpe?g)$/i.test(x) && x.toLowerCase().startsWith(name + '.'));
+  return f ? path.join(d, f) : null;
+};
+
+// Makes the plain light background around a logo transparent (only the area joined to the edges),
+// then trims the empty margin.
+async function cutOutBackground(file) {
+  const { data, info } = await sharp(file).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
+  const { width: w, height: h } = info;
+  const isBg = (i) => {
+    const r = data[i * 4], g = data[i * 4 + 1], b = data[i * 4 + 2];
+    return Math.min(r, g, b) > 222 && Math.max(r, g, b) - Math.min(r, g, b) < 28;
+  };
+  const seen = new Uint8Array(w * h);
+  const stack = [];
+  for (let x = 0; x < w; x++) stack.push(x, (h - 1) * w + x);
+  for (let y = 0; y < h; y++) stack.push(y * w, y * w + w - 1);
+  while (stack.length) {
+    const i = stack.pop();
+    if (seen[i] || !isBg(i)) continue;
+    seen[i] = 1;
+    data[i * 4 + 3] = 0;
+    const x = i % w, y = (i / w) | 0;
+    if (x > 0) stack.push(i - 1);
+    if (x < w - 1) stack.push(i + 1);
+    if (y > 0) stack.push(i - w);
+    if (y < h - 1) stack.push(i + w);
+  }
+  // Soften the edge: light pixels touching the removed area become partly see-through.
+  for (let i = 0; i < w * h; i++) {
+    if (seen[i]) continue;
+    const x = i % w, y = (i / w) | 0;
+    const touches = (x > 0 && seen[i - 1]) || (x < w - 1 && seen[i + 1]) || (y > 0 && seen[i - w]) || (y < h - 1 && seen[i + w]);
+    if (!touches) continue;
+    const light = Math.min(data[i * 4], data[i * 4 + 1], data[i * 4 + 2]);
+    if (light > 170) data[i * 4 + 3] = Math.round(255 * (1 - (light - 170) / 85) * 0.9 + 25);
+  }
+  return sharp(data, { raw: { width: w, height: h, channels: 4 } }).png().toBuffer().then((b) => sharp(b).trim().toBuffer());
+}
+
+async function customBrand(site, dir, logoSrc, iconSrc) {
+  const logo = await cutOutBackground(logoSrc);
+  const tall = sharp(logo).resize({ height: 180, withoutEnlargement: true });
+  await tall.clone().webp({ quality: 90 }).toFile(path.join(dir, 'logo-full.webp'));
+  await tall.clone().png().toFile(path.join(dir, 'logo-full.png'));
+  const meta = await sharp(path.join(dir, 'logo-full.png')).metadata();
+  fs.writeFileSync(path.join(dir, 'logo-full.json'), JSON.stringify({ width: meta.width, height: meta.height }) + '\n');
+
+  const icon = sharp(iconSrc).flatten({ background: '#ffffff' });
+  await icon.clone().resize(512, 512).png().toFile(path.join(dir, 'logo.png'));
+  await icon.clone().resize(192, 192).png().toFile(path.join(dir, 'icon-192.png'));
+  await icon.clone().resize(180, 180).png().toFile(path.join(dir, 'apple-touch-icon.png'));
+  await icon.clone().resize(48, 48).png().toFile(path.join(dir, 'icon-48.png'));
+  for (const old of ['icon.svg', 'logo.svg']) fs.rmSync(path.join(dir, old), { force: true });
+
+  // Social sharing image: the logo centred on white, with the site's colour as a top bar.
+  const W = 1200, H = 630;
+  const fitted = await sharp(logo).resize({ width: 1000, height: 440, fit: 'inside' }).png().toBuffer();
+  const fm = await sharp(fitted).metadata();
+  await sharp({ create: { width: W, height: H, channels: 3, background: '#ffffff' } })
+    .composite([
+      { input: Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="18"><rect width="${W}" height="18" fill="${site.colors.accent}"/></svg>`), top: 0, left: 0 },
+      { input: fitted, top: Math.round((H - fm.height) / 2) + 9, left: Math.round((W - fm.width) / 2) },
+    ])
+    .png()
+    .toFile(path.join(dir, 'og-default.png'));
+}
+
 for (const site of sites) {
   const dir = path.join(root, 'public/brand', site.id);
   fs.mkdirSync(dir, { recursive: true });
+  const logoSrc = findSrc(site.id, 'logo');
+  const iconSrc = findSrc(site.id, 'icon');
+  if (logoSrc && iconSrc) {
+    await customBrand(site, dir, logoSrc, iconSrc);
+    console.log(`brand: ${site.id} (your logo files)`);
+    continue;
+  }
+  for (const old of ['logo-full.webp', 'logo-full.png', 'logo-full.json', 'icon-192.png']) fs.rmSync(path.join(dir, old), { force: true });
   const icon = iconSvg(site);
   fs.writeFileSync(path.join(dir, 'icon.svg'), icon);
   fs.writeFileSync(path.join(dir, 'logo.svg'), logoSvg(site));

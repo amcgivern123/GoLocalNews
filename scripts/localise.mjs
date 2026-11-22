@@ -28,7 +28,7 @@ function readArticle(file) {
 }
 
 async function writeIntros(article, needed) {
-  const prompt = `You write short introductions for a local business news article that is shared across several Northern Ireland news sites.
+  const prompt = `You write short introductions for a local business news article that is shared across several UK local news sites.
 Article title: ${article.title}
 Summary: ${article.description}
 Article text:
